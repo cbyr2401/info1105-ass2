@@ -1,4 +1,4 @@
-java_info1105_ass1 - Cian Byrne and Reuben Lema
+java_info1105_ass2 - Cian Byrne and Reuben Lema
 # Description #
 
 In this assignment, you'll be implementing a hash map which you'll use to create a password management system. In
