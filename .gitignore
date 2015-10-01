@@ -3,6 +3,6 @@
 *.zip
 *.log
 *.pot
-AssessmentTask2/bin/
-.metadata/
-.recommenders/
+AssessmentTask2/bin/*
+.metadata/*
+.recommenders/*
