@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+ * This is the HashMap class for Linear Probing.
+ */
 public class HashMap<K extends Comparable<K>, V> {
 	private ArrayList<HashMapNode<K, V>> map;
 	private int hashMul;
