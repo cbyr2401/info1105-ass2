@@ -1,6 +1,8 @@
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+ * Hi there this is a test, what is happening? yo
+ */
 public class ChainingHashMap<K extends Comparable<K>, V> {
 	private ArrayList<ChainingHashMapNode<K,V>> map;
 	private int hashMul;
