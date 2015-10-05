@@ -71,6 +71,8 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 			 * however it isn't an identical key, it will probe for either the key
 			 * later in the array, or the first null value. contains a nested for
 			 * loop incase the index reaches the last value of the map array
+			 * 
+			 *  TODO:  convert for Double Hashing
 			 */
 			for(int i = index; i < this.map.length; i++){
 				if(this.map[i] == null){
