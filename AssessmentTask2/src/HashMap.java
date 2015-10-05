@@ -2,25 +2,27 @@ import java.util.ArrayList;
 import java.util.List;
 /*
  * This is the HashMap class for Linear Probing.
+ *  NOTE: defunct node means that if you query the position it is in
+ *         it will not be 'null'.  The key and value will be 'null'
  */
 public class HashMap<K extends Comparable<K>, V> {
-	private ArrayList<HashMapNode<K, V>> map;
+	private HashMapNode<K, V>[] map;
 	private int hashMul;
 	private int hashMod;
 	private int numberOfItems;
+	private HashMapNode<K,V> defunct = new HashMapNode<>(null,null);
 
 	// construct a HashMap with 4000 places and given hash parameters
 	public HashMap(int multiplier, int modulus) {
-		this.map = new ArrayList<>(4000);
+		this.map = (HashMapNode<K,V>[]) new HashMapNode[4000];
 		this.hashMod = modulus;
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
-		System.out.println(map.size());
 	}
 
 	// construct a HashMap with given capacity and given hash parameters
 	public HashMap(int hashMapSize, int multiplier, int modulus) {
-		this.map = new ArrayList<>(hashMapSize);
+		this.map = (HashMapNode<K,V>[]) new HashMapNode[4000];
 		this.hashMod = modulus;
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
@@ -28,7 +30,7 @@ public class HashMap<K extends Comparable<K>, V> {
 
 	// hashing
 	public int hash(K key) {
-		return this.hashMul * Math.abs(key.hashCode()) % this.hashMod;
+		return Math.abs(this.hashMul * key.hashCode()) % this.hashMod;
 	}
 
 	// size (return the number of nodes currently stored in the map)
@@ -43,24 +45,26 @@ public class HashMap<K extends Comparable<K>, V> {
 	// interface methods
 	public List<K> keys() {
 		List<K> myList = new ArrayList<K>();
-		for (int i = 0; i < map.size(); i++) {
-			if (map.get(i) != null) {
-				myList.add(map.get(i).getKey());
+		for (int i = 0; i < map.length; i++) {
+			if (this.map[i] != null) {
+				if(this.map[i].getKey() != null){ // due to defunct
+					myList.add(this.map[i].getKey());
+				}
 			}
 		}
 		return myList;
 	}
 
-	@SuppressWarnings("unchecked")
+	
 	public V put(K key, V value) {
-		int index = hash(key);
-		HashMapNode<K,V> node = new HashMapNode<>(key, value);
-		if (get(key) == null) {
-			this.map.add(index, node);
+		int index = hash(key) % this.map.length;
+		
+		if(this.map[index] == null){
+			this.map[index] = new HashMapNode<>(key, value);
 			this.numberOfItems += 1;
 			return null;
 		}
-
+		
 		/*
 		 * This part of the method deals with any collisions, using linear
 		 * probing. If the keys are identical, it will replace the value,
@@ -68,59 +72,34 @@ public class HashMap<K extends Comparable<K>, V> {
 		 * later in the array, or the first null value. contains a nested for
 		 * loop incase the index reaches the last value of the map array
 		 */
-		else {
-			
-			for(int i=index; i < this.map.size(); i++){
-				if(this.map.get(i).getKey() == key) {
-					V temp = this.map.get(i).getValue();
-					this.map.get(i).setValue(value);
+		for(int i = index; i < this.map.length; i++){
+			if(this.map[i] == null){
+				this.map[i] = new HashMapNode<>(key, value);
+				this.numberOfItems += 1;
+				return null;
+			}else{
+				if(this.map[i].getKey().equals(key)){
+					V temp = this.map[i].getValue();
+					this.map[i].setValue(value);;
 					return temp;
-				}
-				if(this.map.get(i) == null){
-					this.map.add(i, node);
-					this.numberOfItems += 1;
-					return null;
 				}
 			}
-			
-			for(int i=0; i < index; i++){
-				if(this.map.get(i).getKey() == key) {
-					V temp = this.map.get(i).getValue();
-					this.map.get(i).setValue(value);
-					return temp;
-				}
-				if(this.map.get(i) == null){
-					this.map.add(i, node);
-					this.numberOfItems += 1;
-					return null;
-				}
-			}
-			
-			/* for (int i = index+1; i < map.size(); i++) {
-				if (this.map.get(i).getKey() == key) {
-					V temp = this.map.get(i).getValue();
-					this.map.get(i).setValue(value);
-					return temp;
-				} else if (map.get(i) == null) {
-					map.add(i, node);
-					this.numberOfItems += 1;
-					return null;
-				}
-				if (i == map.size()) {
-					for (int j = 0; j < map.size(); j++) {
-						if (map.get(j).getKey() == key) {
-							V temp = map.get(j).getValue();
-							map.get(j).setValue(value);
-							return temp;
-						} else if (map.get(j) == null) {
-							map.add(j, node);
-							this.numberOfItems += 1;
-							return null;
-						}
-					}
-				}
-			} */
 		}
+		// wrap around:
+		for(int i = 0; i < index; i++){
+			if(this.map[i] == null){
+				this.map[i] = new HashMapNode<>(key, value);
+				this.numberOfItems += 1;
+				return null;
+			}else{
+				if(this.map[i].getKey().equals(key)){
+					V temp = this.map[i].getValue();
+					this.map[i].setValue(value);;
+					return temp;
+				}
+			}
+		}
+		//keep java happy:
 		return null;
 	}
 
@@ -128,74 +107,46 @@ public class HashMap<K extends Comparable<K>, V> {
 	// map or returns null.
 
 	public V get(K key) {
-		//if(false){
-		//	return null;
-		//}else{
-			int index = hash(key);
-			for(int i=index; i < this.map.size(); i++){
-				//if(this.map.get(i) == null) return null;
-				if(this.map.get(i).getKey() == key) return this.map.get(i).getValue();
-			}
-			for(int i=0; i < index; i++){
-				if(this.map.get(i).getKey() == key) return this.map.get(i).getValue();
-			}
-			return null;
-			
-			/* if (map.get(index) == null) {
-				return null;
-			} else if (map.get(index).getKey() == key) {
-				return map.get(index).getValue();
-			}
-
-			for (int i = index + 1; i < map.size(); i++) {
-				if (map.get(i).getKey() == key) {
-					return map.get(i).getValue();
-				}
-				if (map.get(i).getKey() == null) {
-					return null;
-				}
-				if (i == map.size()) {
-					for (int j = 0; j < map.size(); j++) {
-						if (map.get(j).getKey() == key) {
-							return map.get(j).getValue();
-						}
-						if (map.get(j).getKey() == null) {
-							return null;
-						}
-					}
-				}
-			}
-			return null; */
-		//}
+		int index = hash(key) % this.map.length;
 		
-
+		if(this.map[index] == null) return null; // nothing in map for that:
+		
+		else{
+			for(int i = index; i < this.map.length; i++){
+				if(this.map[index] == null) return null;
+				else if(this.map[i].getKey().equals(key)) return this.map[i].getValue();
+			}
+			for(int i = 0; i < index; i++){
+				if(this.map[i] == null) return null;
+				else if(this.map[i].getKey().equals(key)) return this.map[i].getValue();
+			}
+		}
+		// keep java happy:
+		return null;
 	}
 
 	public V remove(K key) {
-		int index = hash(key);
-		if (map.get(index) == null) {
-			return null;
-		} else if (map.get(index).getKey() == key) {
-			V temp = map.get(index).getValue();
-			map.get(index).setValue(null);
-			return temp;
-		}
-
-		for (int i = index + 1; i < map.size(); i++) {
-			if (map.get(i).getKey() == key) {
-				return map.get(i).getValue();
+		int index = hash(key) % this.map.length;
+		
+		if (this.map[index] == null) return null; //not in the map
+		
+		else{
+			for(int i = index; i < this.map.length; i++){
+				if(this.map[index] == null) return null;
+				else if(this.map[i].getKey().equals(key)) {
+					V temp = this.map[i].getValue();
+					this.map[i] = this.defunct;
+					this.numberOfItems -= 1;
+					return temp;
+				}
 			}
-			if (map.get(i).getKey() == null) {
-				return null;
-			}
-			if (i == map.size()) {
-				for (int j = 0; j < map.size(); j++) {
-					if (map.get(j).getKey() == key) {
-						return map.get(j).getValue();
-					}
-					if (map.get(j).getKey() == null) {
-						return null;
-					}
+			for(int i = 0; i < index; i++){
+				if(this.map[index] == null) return null;
+				else if(this.map[i].getKey().equals(key)) {
+					V temp = this.map[i].getValue();
+					this.map[i] = this.defunct;
+					this.numberOfItems -= 1;
+					return temp;
 				}
 			}
 		}
