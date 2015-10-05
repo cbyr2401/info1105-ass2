@@ -22,7 +22,7 @@ public class HashMap<K extends Comparable<K>, V> {
 
 	// construct a HashMap with given capacity and given hash parameters
 	public HashMap(int hashMapSize, int multiplier, int modulus) {
-		this.map = (HashMapNode<K,V>[]) new HashMapNode[4000];
+		this.map = (HashMapNode<K,V>[]) new HashMapNode[hashMapSize];
 		this.hashMod = modulus;
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
@@ -71,6 +71,8 @@ public class HashMap<K extends Comparable<K>, V> {
 		 * however it isn't an identical key, it will probe for either the key
 		 * later in the array, or the first null value. contains a nested for
 		 * loop incase the index reaches the last value of the map array
+		 * 
+		 *  TODO:  convert for Double Hashing
 		 */
 		for(int i = index; i < this.map.length; i++){
 			if(this.map[i] == null){
