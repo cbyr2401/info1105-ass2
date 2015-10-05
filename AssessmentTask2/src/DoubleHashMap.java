@@ -57,50 +57,53 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 
 		
 		public V put(K key, V value) {
-			int index = hash(key) % this.map.length;
+			int index = hash(key);
 			
-			if(this.map[index] == null){
-				this.map[index] = new HashMapNode<>(key, value);
+			if(this.map[index % this.map.length] == null){
+				this.map[index % this.map.length] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
 				return null;
 			}
 			
+			int j = 0;
+			int k = secondaryHash(key);
+			int current = 0;
+			while(current < this.map.length){
+				current = (index + j * k) % this.map.length;
+				if(this.map[current] == null){
+					this.map[current] = new HashMapNode<>(key, value);
+					this.numberOfItems += 1;
+					return null;
+				}else{
+					if(this.map[current].getKey().equals(key)){
+						V temp = this.map[current].getValue();
+						this.map[current].setValue(value);;
+						return temp;
+					}
+				}
+				j++;
+			}
 			/*
-			 * This part of the method deals with any collisions, using linear
-			 * probing. If the keys are identical, it will replace the value,
-			 * however it isn't an identical key, it will probe for either the key
-			 * later in the array, or the first null value. contains a nested for
-			 * loop incase the index reaches the last value of the map array
-			 * 
-			 *  TODO:  convert for Double Hashing
+			 * TODO:  Check if we need to go over the map again.
 			 */
-			for(int i = index; i < this.map.length; i++){
-				if(this.map[i] == null){
-					this.map[i] = new HashMapNode<>(key, value);
+			current = 0;
+			j = 0;
+			while(current < index){
+				current = 0 + j * k;
+				if(this.map[current] == null){
+					this.map[current] = new HashMapNode<>(key, value);
 					this.numberOfItems += 1;
 					return null;
 				}else{
-					if(this.map[i].getKey().equals(key)){
-						V temp = this.map[i].getValue();
-						this.map[i].setValue(value);;
+					if(this.map[current].getKey().equals(key)){
+						V temp = this.map[current].getValue();
+						this.map[current].setValue(value);;
 						return temp;
 					}
 				}
+				j++;
 			}
-			// wrap around:
-			for(int i = 0; i < index; i++){
-				if(this.map[i] == null){
-					this.map[i] = new HashMapNode<>(key, value);
-					this.numberOfItems += 1;
-					return null;
-				}else{
-					if(this.map[i].getKey().equals(key)){
-						V temp = this.map[i].getValue();
-						this.map[i].setValue(value);;
-						return temp;
-					}
-				}
-			}
+			
 			//keep java happy:
 			return null;
 		}
