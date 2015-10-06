@@ -57,19 +57,20 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 
 		
 		public V put(K key, V value) {
-			int index = hash(key);
+			int hash1 = hash(key);
 			
-			if(this.map[index % this.map.length] == null){
-				this.map[index % this.map.length] = new HashMapNode<>(key, value);
+			if(this.map[hash1 % this.map.length] == null){
+				this.map[hash1 % this.map.length] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
 				return null;
 			}
 			
 			int j = 0;
-			int k = secondaryHash(key);
+			int hash2 = secondaryHash(key);
 			int current = 0;
-			while(current < this.map.length){
-				current = (index + j * k) % this.map.length;
+			int initialIndex = (hash1 + j * hash2) % this.map.length;
+			while(current != initialIndex){
+				current = (hash1 + j * hash2) % this.map.length;
 				if(this.map[current] == null){
 					this.map[current] = new HashMapNode<>(key, value);
 					this.numberOfItems += 1;
@@ -83,29 +84,13 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 				}
 				j++;
 			}
+			throw new UnsupportedOperationException();
 			/*
 			 * TODO:  Check if we need to go over the map again.
 			 */
-			current = 0;
-			j = 0;
-			while(current < index){
-				current = 0 + j * k;
-				if(this.map[current] == null){
-					this.map[current] = new HashMapNode<>(key, value);
-					this.numberOfItems += 1;
-					return null;
-				}else{
-					if(this.map[current].getKey().equals(key)){
-						V temp = this.map[current].getValue();
-						this.map[current].setValue(value);;
-						return temp;
-					}
-				}
-				j++;
-			}
 			
 			//keep java happy:
-			return null;
+			//return null;
 		}
 
 		// Gets the hash index, then either returns the value at this index from the
