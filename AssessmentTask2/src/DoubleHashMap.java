@@ -65,12 +65,14 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 				return null;
 			}
 			
-			int j = 0;
 			int hash2 = secondaryHash(key);
-			int current = 0;
-			int initialIndex = (hash1 + j * hash2) % this.map.length;
-			while(current != initialIndex){
-				current = (hash1 + j * hash2) % this.map.length;
+			int current = -1;
+			int initialIndex = (hash1 + 0 * hash2) % this.map.length;
+
+			for(int j=0; current != initialIndex; j++){
+
+				current = (hash1 + (j * hash2)) % this.map.length; 
+
 				if(this.map[current] == null){
 					this.map[current] = new HashMapNode<>(key, value);
 					this.numberOfItems += 1;
@@ -82,9 +84,8 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 						return temp;
 					}
 				}
-				j++;
 			}
-			throw new UnsupportedOperationException();
+			throw new RuntimeException("Double Hashing failed to find a free position");
 			/*
 			 * TODO:  Check if we need to go over the map again.
 			 */
@@ -98,17 +99,25 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 
 		public V get(K key) {
 			int index = hash(key) % this.map.length;
-			
-			if(this.map[index] == null) return null; // nothing in map for that:
-			
-			else{
-				for(int i = index; i < this.map.length; i++){
+						
+			if(this.map[index] == null){
+				return null; // nothing in map for that with single hash
+			}else if(this.map[index].getKey().equals(key)){
+				System.out.println("Ez find... " + index + " Key: " + key);
+				return this.map[index].getValue();
+				
+			}else{
+				int h = hash(key) + (0 * secondaryHash(key));
+				int current = -1;
+				System.out.println("In Else statement");
+				for(int i = 1; current != h; i++){
+					current = hash(key) + (i * secondaryHash(key));
+					index = current % this.map.length;
+					
+					System.out.println("Index: " + index + " Key: " + key + " map reference: " + this.map[index]);
+					
 					if(this.map[index] == null) return null;
-					else if(this.map[i].getKey().equals(key)) return this.map[i].getValue();
-				}
-				for(int i = 0; i < index; i++){
-					if(this.map[i] == null) return null;
-					else if(this.map[i].getKey().equals(key)) return this.map[i].getValue();
+					else if(this.map[index].getKey().equals(key)) return this.map[index].getValue();
 				}
 			}
 			// keep java happy:

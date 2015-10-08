@@ -11,6 +11,11 @@ public class HashMap<K extends Comparable<K>, V> {
 	private int hashMod;
 	private int numberOfItems;
 	private HashMapNode<K,V> defunct = new HashMapNode<>(null,null);
+	
+	//Variables used for statistics
+	private int collisionTally;
+	private int totalTally;
+	private int maxTally;
 
 	// construct a HashMap with 4000 places and given hash parameters
 	public HashMap(int multiplier, int modulus) {
@@ -18,6 +23,9 @@ public class HashMap<K extends Comparable<K>, V> {
 		this.hashMod = modulus;
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
+		this.collisionTally=0;
+		this.totalTally=0;
+		this.maxTally=0;
 	}
 
 	// construct a HashMap with given capacity and given hash parameters
@@ -65,13 +73,17 @@ public class HashMap<K extends Comparable<K>, V> {
 			return null;
 		}
 		
+		//Placing the tally here, will add to the tally as soon as there is a collision. However it will not 
+		//Continually add with each iteration of the for loop.
+		collisionTally++;
 		/*
 		 * This part of the method deals with any collisions, using linear
 		 * probing. If the keys are identical, it will replace the value,
 		 * however it isn't an identical key, it will probe for either the key
-		 * later in the array, or the first null value. contains a nested for
-		 * loop incase the index reaches the last value of the map array
+		 * later in the array, or the first null value. 
 		 */
+		int max=0;
+		
 		for(int i = index; i < this.map.length; i++){
 			if(this.map[i] == null){
 				this.map[i] = new HashMapNode<>(key, value);
@@ -82,6 +94,11 @@ public class HashMap<K extends Comparable<K>, V> {
 					V temp = this.map[i].getValue();
 					this.map[i].setValue(value);;
 					return temp;
+				}
+				totalTally++;
+				max++;
+				if (max>maxTally){
+					maxTally=max;
 				}
 			}
 		}
@@ -96,6 +113,11 @@ public class HashMap<K extends Comparable<K>, V> {
 					V temp = this.map[i].getValue();
 					this.map[i].setValue(value);;
 					return temp;
+				}
+				totalTally++;
+				max++;
+				if (max>maxTally){
+					maxTally=max;
 				}
 			}
 		}
@@ -151,5 +173,20 @@ public class HashMap<K extends Comparable<K>, V> {
 			}
 		}
 		return null;
+	}
+	
+	public int putCollision(){
+		return this.collisionTally;
+	}
+	public int totalCollision(){
+		return totalTally;
+	}
+	public int maxCollision(){
+		return maxTally;
+	}
+	public void resetStatistics(){
+		this.collisionTally=0;
+		this.totalTally=0;
+		this.maxTally=0;
 	}
 }
