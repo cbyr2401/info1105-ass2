@@ -34,6 +34,7 @@ public class DoubleHashMapTests {
 		m.put(0, 15);
 		
 		assertEquals(15, (int)m.get(0));
+		// double hash
 		assertEquals(15, (int)m.put(0, 25));
 		assertEquals(25, (int)m.get(0));
 		
@@ -103,21 +104,21 @@ public class DoubleHashMapTests {
 		assertEquals(5, map.hash(25));
 		assertEquals(3, map.hash(50));
 		
-		//assertEquals(4, m.secondaryHash(10000));
-		assertEquals(1, m.secondaryHash(15));
-		assertEquals(3, m.secondaryHash(25));
-		assertEquals(2, m.secondaryHash(50));
-		assertEquals(3, m.secondaryHash(1));
+		//assertEquals(4, map.secondaryHash(10000));
+		assertEquals(1, map.secondaryHash(15));
+		assertEquals(3, map.secondaryHash(25));
+		assertEquals(2, map.secondaryHash(50));
+		assertEquals(3, map.secondaryHash(1));
 		
 		assertEquals(5, map.hash(11));
 		assertEquals(1, map.hash(12));
 		assertEquals(4, map.hash(13));
 		assertEquals(3, map.hash(127));
 		
-		assertEquals(1, m.secondaryHash(11));
-		assertEquals(4, m.secondaryHash(12));
-		assertEquals(3, m.secondaryHash(13));
-		assertEquals(1, m.secondaryHash(127));
+		assertEquals(1, map.secondaryHash(11));
+		assertEquals(4, map.secondaryHash(12));
+		assertEquals(3, map.secondaryHash(13));
+		assertEquals(1, map.secondaryHash(127));
 	}
 	
 	@Test
