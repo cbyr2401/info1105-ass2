@@ -92,7 +92,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		
 		if(this.map[index] == null){
 			// add first node for that bin
-			System.out.println("add first node for that bin");
+			//System.out.println("add first node for that bin");
 			this.map[index] = new ChainingHashMapNode<>(key, value);
 			this.numberOfItems += 1;
 			return null;
@@ -103,14 +103,14 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				ChainingHashMapNode<K,V> current = this.map[index];
 				if(current.getKey().equals(key)){
 					// element is the same, update value and return
-					System.out.println("element is the same, update value and return");
+					//System.out.println("element is the same, update value and return");
 					V temp = this.map[index].getValue();
 					this.map[index].setValue(value);
 					return temp;
 				}
 				if(current.getNext() == null){
 					// add element to the end of the linked list:
-					System.out.println("add element to the end of the linked list");
+					//System.out.println("add element to the end of the linked list");
 					current.setNext(new ChainingHashMapNode<K,V>(key, value));
 					this.numberOfItems += 1;
 					return null;
@@ -124,22 +124,22 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		
 		if(this.map[index] == null){
 			// bin is empty, therefore does not exist
-			System.out.println("bin is empty, therefore does not exist");
+			//System.out.println("bin is empty, therefore does not exist");
 			return null;
 		}else{
 			// there is stuff in the bin, but what?
 			boolean done = false;
 			ChainingHashMapNode<K,V> current = this.map[index];
 			while(!done){
-				System.out.print(current + " | Next:" + current.getNext() + " | Value: " + current.getValue() + " | Key: " + current.getKey());
+				//System.out.print(current + " | Next:" + current.getNext() + " | Value: " + current.getValue() + " | Key: " + current.getKey());
 				if(current.getKey().equals(key)){
 					// element is located, return value
-					System.out.println("element is located, return value");
+					//System.out.println("element is located, return value");
 					return this.map[index].getValue();
 				}
 				if(current.getNext() != null){
 					// there are more elements
-					System.out.println("there are more elements");
+					//System.out.println("there are more elements");
 					current = current.getNext();
 				}else{
 					return null;
@@ -154,7 +154,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		
 		if(this.map[index] == null){
 			// bin is empty, therefore does not exist
-			System.out.println("bin is empty, therefore does not exist");
+			//System.out.println("bin is empty, therefore does not exist");
 			return null;
 		}else{
 			// there is stuff in the bin, but what?
@@ -162,7 +162,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 			ChainingHashMapNode<K,V> current = this.map[index];
 			ChainingHashMapNode<K,V> previous = null;
 			while(!done){
-				System.out.print(current + " | Next:" + current.getNext() + " | Value: " + current.getValue() + " | Key: " + current.getKey());
+				//System.out.print(current + " | Next:" + current.getNext() + " | Value: " + current.getValue() + " | Key: " + current.getKey());
 				if(current.getKey().equals(key)){
 					// element is located, return value
 					/*
@@ -187,7 +187,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				}
 				if(current.getNext() != null){
 					// there are more elements
-					System.out.println("there are more elements");
+					//System.out.println("there are more elements");
 					current = current.getNext();
 				}else{
 					return null;

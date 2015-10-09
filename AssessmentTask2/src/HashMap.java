@@ -13,7 +13,7 @@ public class HashMap<K extends Comparable<K>, V> {
 	private HashMapNode<K,V> defunct = new HashMapNode<>(null,null);
 	
 	//Variables used for statistics
-	private int collisionTally;
+	private int putCollisions;
 	private int totalTally;
 	private int maxTally;
 
@@ -23,9 +23,8 @@ public class HashMap<K extends Comparable<K>, V> {
 		this.hashMod = modulus;
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
-		this.collisionTally=0;
-		this.totalTally=0;
-		this.maxTally=0;
+		// for stats:
+		resetStatistics();
 	}
 
 	// construct a HashMap with given capacity and given hash parameters
@@ -34,6 +33,8 @@ public class HashMap<K extends Comparable<K>, V> {
 		this.hashMod = modulus;
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
+		// for stats
+		resetStatistics();
 	}
 
 	// hashing
@@ -67,58 +68,65 @@ public class HashMap<K extends Comparable<K>, V> {
 	public V put(K key, V value) {
 		int index = hash(key) % this.map.length;
 		
-		if(this.map[index] == null){
-			this.map[index] = new HashMapNode<>(key, value);
-			this.numberOfItems += 1;
-			return null;
-		}
-		
 		//Placing the tally here, will add to the tally as soon as there is a collision. However it will not 
 		//Continually add with each iteration of the for loop.
-		collisionTally++;
+		//putCollisions++;
 		/*
 		 * This part of the method deals with any collisions, using linear
 		 * probing. If the keys are identical, it will replace the value,
 		 * however it isn't an identical key, it will probe for either the key
 		 * later in the array, or the first null value. 
 		 */
-		int max=0;
-		
+
+		int counter = 0;
 		for(int i = index; i < this.map.length; i++){
 			if(this.map[i] == null){
+				// found an empty node, put value in
 				this.map[i] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
+				
+				// statistics collection:
+				if(counter > this.maxTally) this.maxTally = counter;
+				
 				return null;
 			}else{
 				if(this.map[i].getKey().equals(key)){
+					// node with same key, replace value
 					V temp = this.map[i].getValue();
-					this.map[i].setValue(value);;
+					this.map[i].setValue(value);
+					
+					// statistics collection:
+					if(counter > this.maxTally) this.maxTally = counter;
 					return temp;
 				}
-				totalTally++;
-				max++;
-				if (max>maxTally){
-					maxTally=max;
-				}
+				if(i==index) this.putCollisions++;
+				this.totalTally++;
+				counter++;
 			}
 		}
 		// wrap around:
 		for(int i = 0; i < index; i++){
 			if(this.map[i] == null){
+				// found an empty node, put value in
 				this.map[i] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
+				
+				// statistics collection:
+				if(counter > this.maxTally) this.maxTally = counter;
 				return null;
 			}else{
+				
 				if(this.map[i].getKey().equals(key)){
+					// node with same key, replace value
 					V temp = this.map[i].getValue();
-					this.map[i].setValue(value);;
+					this.map[i].setValue(value);
+					
+					// statistics collection:
+					if(counter > this.maxTally) this.maxTally = counter;
 					return temp;
 				}
-				totalTally++;
-				max++;
-				if (max>maxTally){
-					maxTally=max;
-				}
+				this.totalTally++;
+				counter++;
 			}
 		}
 		//keep java happy:
@@ -175,17 +183,17 @@ public class HashMap<K extends Comparable<K>, V> {
 		return null;
 	}
 	
-	public int putCollision(){
-		return this.collisionTally;
+	public int putCollisions(){
+		return this.putCollisions;
 	}
-	public int totalCollision(){
-		return totalTally;
+	public int totalCollisions(){
+		return this.totalTally;
 	}
-	public int maxCollision(){
-		return maxTally;
+	public int maxCollisions(){
+		return this.maxTally;
 	}
 	public void resetStatistics(){
-		this.collisionTally=0;
+		this.putCollisions=0;
 		this.totalTally=0;
 		this.maxTally=0;
 	}

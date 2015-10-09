@@ -38,11 +38,20 @@ public class HashMapTests {
 		assertEquals(15, (int)m.put(0, 25));
 		assertEquals(25, (int)m.get(0));
 		
+		assertEquals(0, m.totalCollisions());
+		assertEquals(0, m.putCollisions());
+		
 		m.put(1, 100);
 		assertEquals(100, (int)m.get(1));
+		assertEquals(1, m.totalCollisions());
 		
 		m.put(10000, 125);
-		assertEquals(125, (int)m.get(10000));		
+		assertEquals(125, (int)m.get(10000));
+		assertEquals(3, m.totalCollisions());
+		
+		assertEquals(3, m.totalCollisions());
+		assertEquals(2, m.putCollisions());
+		assertEquals(2, m.maxCollisions());
 	}
 	
 	@Test
