@@ -11,7 +11,7 @@ public class DoubleHashMapTests {
      public ExpectedException exception = ExpectedException.none();
 	
 	
-/*	@Test
+	@Test
 	public void testConstruction(){
 		DoubleHashMap<Integer, Integer> m = new DoubleHashMap<>(10,10,7);
 		assertEquals(0, m.size());
@@ -32,7 +32,7 @@ public class DoubleHashMapTests {
 		assertEquals(false, m.isEmpty());
 		assertEquals(1, m.keys().size());		
 		
-	}*/
+	}
 	
 	@Test
 	public void testTinyCollisions(){
@@ -45,22 +45,24 @@ public class DoubleHashMapTests {
 		assertEquals(15, (int)m.put(0, 25));
 		assertEquals(25, (int)m.get(0));
 		
-		try {
+		assertEquals(null, m.put(1, 100));
+		
+		/*try {
 			//do a single put operation here
-			m.put(1, 100);
+			
 		} catch(RuntimeException e) {
 			if(!e.getMessage().equals("Double Hashing failed to find a free position")) {
 				throw e;
 			}
-		}
-		
-		assertEquals(null, (int)m.get(1));
+		}*/
+		System.out.println(m.keys());
+		assertEquals(100, (int)m.get(1));
 		
 		m.put(10000, 125);
 		assertEquals(125, (int)m.get(10000));		
 	}
 	
-	/*@Test
+	@Test
 	public void testTinyHardCollisions(){
 		DoubleHashMap<Integer, Integer> m = new DoubleHashMap<>(10,7,4);
 		
@@ -189,6 +191,6 @@ public class DoubleHashMapTests {
 		assertEquals(55, (int)m.remove(5));
 		assertEquals(3, m.size());
 		assertEquals(3, m.keys().size());
-	}*/
+	}
 
 }

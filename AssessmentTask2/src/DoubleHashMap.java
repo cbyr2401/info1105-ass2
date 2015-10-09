@@ -57,19 +57,13 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 
 		
 		public V put(K key, V value) {
-			int hash1 = hash(key);
-			
-			if(this.map[hash1 % this.map.length] == null){
-				this.map[hash1 % this.map.length] = new HashMapNode<>(key, value);
-				this.numberOfItems += 1;
-				return null;
-			}
-			
+			int hash1 = hash(key);		
 			int hash2 = secondaryHash(key);
 			int current = -1;
 			int initialIndex = (hash1 + 0 * hash2) % this.map.length;
-
-			for(int j=0; current != initialIndex; j++){
+			boolean flag = false;
+			
+			for(int j=0; current < this.map.length; j++){
 
 				current = (hash1 + (j * hash2)) % this.map.length; 
 
@@ -84,66 +78,48 @@ public class DoubleHashMap<K extends Comparable<K>, V>{
 						return temp;
 					}
 				}
+				if(current == initialIndex && flag) {
+					if(flag) break;
+					else flag=true;
+				}
 			}
 			throw new RuntimeException("Double Hashing failed to find a free position");
-			/*
-			 * TODO:  Check if we need to go over the map again.
-			 */
-			
-			//keep java happy:
-			//return null;
 		}
 
 		// Gets the hash index, then either returns the value at this index from the
 		// map or returns null.
-
+		
 		public V get(K key) {
-			int index = hash(key) % this.map.length;
-						
-			if(this.map[index] == null){
-				return null; // nothing in map for that with single hash
-			}else if(this.map[index].getKey().equals(key)){
-				System.out.println("Ez find... " + index + " Key: " + key);
-				return this.map[index].getValue();
-				
-			}else{
-				int h = hash(key) + (0 * secondaryHash(key));
-				int current = -1;
-				System.out.println("In Else statement");
-				for(int i = 1; current != h; i++){
-					current = hash(key) + (i * secondaryHash(key));
-					index = current % this.map.length;
-					
-					System.out.println("Index: " + index + " Key: " + key + " map reference: " + this.map[index]);
-					
-					if(this.map[index] == null) return null;
-					else if(this.map[index].getKey().equals(key)) return this.map[index].getValue();
+			int hash1 = hash(key) % this.map.length;
+			int hash2 = secondaryHash(key);
+			int current = -1;
+			
+			for(int j=0; current < this.map.length; j++){
+				current = (hash1 + (j * hash2)) % this.map.length; 
+				if(this.map[current] == null){
+					return null;
+				}else{
+					if(this.map[current].getKey().equals(key)){
+						return this.map[current].getValue();
+					}
 				}
 			}
-			// keep java happy:
 			return null;
 		}
 
 		public V remove(K key) {
-			int index = hash(key) % this.map.length;
+			int hash1 = hash(key) % this.map.length;
+			int hash2 = secondaryHash(key);
+			int current = -1;
 			
-			if (this.map[index] == null) return null; //not in the map
-			
-			else{
-				for(int i = index; i < this.map.length; i++){
-					if(this.map[index] == null) return null;
-					else if(this.map[i].getKey().equals(key)) {
-						V temp = this.map[i].getValue();
-						this.map[i] = this.defunct;
-						this.numberOfItems -= 1;
-						return temp;
-					}
-				}
-				for(int i = 0; i < index; i++){
-					if(this.map[index] == null) return null;
-					else if(this.map[i].getKey().equals(key)) {
-						V temp = this.map[i].getValue();
-						this.map[i] = this.defunct;
+			for(int j=0; current < this.map.length; j++){
+				current = (hash1 + (j * hash2)) % this.map.length; 
+				if(this.map[current] == null){
+					return null;
+				}else{
+					if(this.map[current].getKey().equals(key)){
+						V temp = this.map[current].getValue();
+						this.map[current] = this.defunct;
 						this.numberOfItems -= 1;
 						return temp;
 					}
