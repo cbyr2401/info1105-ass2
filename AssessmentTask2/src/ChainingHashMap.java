@@ -46,12 +46,13 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				if(this.map[i] != null){
 					// there is a node in the array, but how many are unknown.
 					boolean done = false;
+					ChainingHashMapNode<K,V> current = this.map[i];
 					while(!done){
-						ChainingHashMapNode<K,V> current = this.map[i];
+						
 						numNodes += 1;
-						if(this.map[i].getNext() != null){
+						if(current.getNext() != null){
 							// there are more nodes:
-							current = this.map[i].getNext();
+							current = current.getNext();
 						}else{
 							done = true;
 							// check / update values for getting largest bracket
@@ -72,12 +73,12 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				if(this.map[i] != null){
 					// there is a node in the array, but how many are unknown.
 					boolean done = false;
+					ChainingHashMapNode<K,V> current = this.map[i];
 					while(!done){
-						ChainingHashMapNode<K,V> current = this.map[i];
-						myList.add(this.map[i].getKey());
-						if(this.map[i].getNext() != null){
+						myList.add(current.getKey());
+						if(current.getNext() != null){
 							// there are more nodes:
-							current = this.map[i].getNext();
+							current = current.getNext();
 						}else{
 							done = true;
 						}
@@ -98,14 +99,14 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 			return null;
 		}else{
 			boolean done = false;
-			
+			ChainingHashMapNode<K,V> current = this.map[index];
 			while(!done){
-				ChainingHashMapNode<K,V> current = this.map[index];
+				
 				if(current.getKey().equals(key)){
 					// element is the same, update value and return
 					//System.out.println("element is the same, update value and return");
-					V temp = this.map[index].getValue();
-					this.map[index].setValue(value);
+					V temp = current.getValue();
+					current.setValue(value);
 					return temp;
 				}
 				if(current.getNext() == null){
@@ -115,6 +116,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 					this.numberOfItems += 1;
 					return null;
 				}
+				current = current.getNext();
 			}
 		}
 		return null;
@@ -135,7 +137,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				if(current.getKey().equals(key)){
 					// element is located, return value
 					//System.out.println("element is located, return value");
-					return this.map[index].getValue();
+					return current.getValue();
 				}
 				if(current.getNext() != null){
 					// there are more elements

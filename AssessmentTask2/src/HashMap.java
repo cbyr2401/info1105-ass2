@@ -163,7 +163,7 @@ public class HashMap<K extends Comparable<K>, V> {
 		
 		else{
 			for(int i = index; i < this.map.length; i++){
-				if(this.map[index] == null) return null;
+				if(this.map[i] == null) return null;
 				else if(this.map[i].getKey().equals(key)) {
 					V temp = this.map[i].getValue();
 					this.map[i] = this.defunct;
@@ -172,7 +172,7 @@ public class HashMap<K extends Comparable<K>, V> {
 				}
 			}
 			for(int i = 0; i < index; i++){
-				if(this.map[index] == null) return null;
+				if(this.map[i] == null) return null;
 				else if(this.map[i].getKey().equals(key)) {
 					V temp = this.map[i].getValue();
 					this.map[i] = this.defunct;

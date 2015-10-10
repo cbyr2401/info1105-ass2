@@ -98,5 +98,35 @@ public class ChainingHashMapTests {
 		assertEquals(3, m.keys().size());
 	}
 	
+	
+	@Test(timeout=1000)
+	public void testTinyCollisions(){
+		ChainingHashMap<Integer, Integer> m = new ChainingHashMap<>(10,7);
+				
+		m.put(0, 15);
+		
+		assertEquals(15, (int)m.get(0));
+		assertEquals(15, (int)m.put(0, 25));
+		assertEquals(25, (int)m.get(0));
+		
+		m.put(1, 100);
+		assertEquals(100, (int)m.get(1));
+		
+		assertEquals(null, m.put(15, 125));
+		System.out.println(m.keys());
+		assertEquals(125, (int)m.get(15));	
+		assertEquals(3, m.keys().size());
+		
+		assertEquals(null, m.put(11, 11));
+		assertEquals(null, m.put(12, 12));
+		assertEquals(null, m.put(13, 13));
+		assertEquals(null, m.put(127, 127));
+		
+		assertEquals(127, (int)m.get(127));
+		
+		
+		
+	}
+	
 
 }
