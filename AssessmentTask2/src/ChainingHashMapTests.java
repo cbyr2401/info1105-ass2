@@ -73,7 +73,7 @@ public class ChainingHashMapTests {
 	
 	@Test
 	public void testSmallRemoval(){
-		HashMap<Integer, Integer> m = new HashMap<>(10,7);
+		ChainingHashMap<Integer, Integer> m = new ChainingHashMap<>(10,7);
 		
 		m.put(0, 5);
 		m.put(1, 15);

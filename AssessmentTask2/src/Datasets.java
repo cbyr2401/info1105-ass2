@@ -6,11 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Datasets {
-	DoubleHashMap<String, Double> hashMap;
+	// change hash map type here:
+	HashMap<String, Double> hashMap;
+	
+	public Datasets(){
+		// empty
+	}
+	
+	
+	public Datasets(int mul, int mod, int size){
+		this.hashMap = new HashMap<>(size,mul,mod);
+	}
 	
 	public Datasets(int mul, int mod, int size, int mod2){
-		this.hashMap = new DoubleHashMap<>(size,mul,mod,mod2);
+		//this.hashMap = new DoubleHashMap<>(size,mul,mod,mod2);
 	}
+	
 	
 	/*
 	 *  Dataset A: bot IP Addresses (datasetA.txt)
@@ -36,7 +47,7 @@ public class Datasets {
 		System.out.println("PUT COLLISIONS: " + hashMap.putCollisions());
 	 	System.out.println("TOTAL COLLISIONS: " + hashMap.totalCollisions());
 	 	System.out.println("MAX COLLISIONS: " + hashMap.maxCollisions());
-	 	System.out.println("FAILURES: " + hashMap.putFailures());
+	 	//System.out.println("FAILURES: " + hashMap.putFailures());
 	}
 	
 	/*
@@ -46,6 +57,7 @@ public class Datasets {
 	public void printHashCollisions(String pathToFile) throws FileNotFoundException, IOException {
 		HashMap<Long, List<String>> map = new HashMap<Long, List<String>>(50000, 1, 56897);
 		SimplePasswordManager spm = new SimplePasswordManager();
+		int passwordCounter = 0;
 		BufferedReader br = new BufferedReader(new FileReader(pathToFile));
 		try {
 			String line = br.readLine();
@@ -53,6 +65,12 @@ public class Datasets {
 				String password = line.trim();
 				Long passwordHash = spm.hashPassword(password);
 				// TODO: if passwordHash is in a, add password to its list value
+				if(map.get(passwordHash) != null){
+					map.get(passwordHash).add(password);
+				}else{
+					map.put(passwordHash, new ArrayList<String>());
+					map.get(passwordHash).add(password);					
+				}
 				// else, instantiate a new ArrayList and add password to it
 				line = br.readLine();
 			}
@@ -64,8 +82,10 @@ public class Datasets {
 			List<String> passwords = map.get(hash);
 			if (passwords.size() > 1) {
 				// all passwords in this list have the same hash representation
+				passwordCounter += passwords.size();
 			}
 		}
+		System.out.println(passwordCounter + " passwords have the same HASH VALUE as something else.");
 	}
 	
 }

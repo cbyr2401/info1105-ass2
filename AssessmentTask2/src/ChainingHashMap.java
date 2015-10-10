@@ -183,6 +183,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 						// it is the first item in the bin, so we empty that bin:
 						this.map[index] = null;
 					}
+					this.numberOfItems -= 1;
 					return tempValue;
 				}
 				if(current.getNext() != null){
