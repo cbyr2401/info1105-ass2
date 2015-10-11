@@ -41,31 +41,33 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		int maxNodes = 0;
 		int maxIndex = 0;
 		int numNodes = 0;
-
+		ChainingHashMapNode<K,V> current;
 		for (int i = 0; i < this.map.length; i++) {
-				if(this.map[i] != null){
-					// there is a node in the array, but how many are unknown.
-					boolean done = false;
-					ChainingHashMapNode<K,V> current = this.map[i];
-					while(!done){
-						
-						numNodes += 1;
-						if(current.getNext() != null){
-							// there are more nodes:
-							current = current.getNext();
-						}else{
-							done = true;
-							// check / update values for getting largest bracket
-							if(numNodes >= maxNodes){
-								maxIndex = i;
-								maxNodes = numNodes;
-							}
+			current = this.map[i];	
+			if(current != null){
+				// there is a node in the array, but how many are unknown.
+				boolean done = false;
+				
+				while(!done){
+					
+					numNodes += 1;
+					if(current.getNext() != null){
+						// there are more nodes:
+						current = current.getNext();
+					}else{
+						done = true;
+						// check / update values for getting largest bracket
+						if(numNodes > maxNodes){
+							maxIndex = i;
+							maxNodes = numNodes;
 						}
+						numNodes = 0;
 					}
 				}
 			}
-		int[] arr = {maxNodes, maxIndex};
-		return arr;
+			}
+		//int[] arr = {maxNodes, maxIndex};
+		return new int[] {maxNodes, maxIndex};
 	}
 	public List<K> keys(){
 		List<K> myList = new ArrayList<K>();
@@ -93,7 +95,6 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		
 		if(this.map[index] == null){
 			// add first node for that bin
-			//System.out.println("add first node for that bin");
 			this.map[index] = new ChainingHashMapNode<>(key, value);
 			this.numberOfItems += 1;
 			return null;
@@ -104,14 +105,12 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				
 				if(current.getKey().equals(key)){
 					// element is the same, update value and return
-					//System.out.println("element is the same, update value and return");
 					V temp = current.getValue();
 					current.setValue(value);
 					return temp;
 				}
 				if(current.getNext() == null){
 					// add element to the end of the linked list:
-					//System.out.println("add element to the end of the linked list");
 					current.setNext(new ChainingHashMapNode<K,V>(key, value));
 					this.numberOfItems += 1;
 					return null;
@@ -126,22 +125,18 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		
 		if(this.map[index] == null){
 			// bin is empty, therefore does not exist
-			//System.out.println("bin is empty, therefore does not exist");
 			return null;
 		}else{
 			// there is stuff in the bin, but what?
 			boolean done = false;
 			ChainingHashMapNode<K,V> current = this.map[index];
 			while(!done){
-				//System.out.print(current + " | Next:" + current.getNext() + " | Value: " + current.getValue() + " | Key: " + current.getKey());
 				if(current.getKey().equals(key)){
 					// element is located, return value
-					//System.out.println("element is located, return value");
 					return current.getValue();
 				}
 				if(current.getNext() != null){
 					// there are more elements
-					//System.out.println("there are more elements");
 					current = current.getNext();
 				}else{
 					return null;
@@ -156,45 +151,53 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		
 		if(this.map[index] == null){
 			// bin is empty, therefore does not exist
-			//System.out.println("bin is empty, therefore does not exist");
 			return null;
 		}else{
 			// there is stuff in the bin, but what?
 			boolean done = false;
 			ChainingHashMapNode<K,V> current = this.map[index];
 			ChainingHashMapNode<K,V> previous = null;
-			while(!done){
-				//System.out.print(current + " | Next:" + current.getNext() + " | Value: " + current.getValue() + " | Key: " + current.getKey());
+			ChainingHashMapNode<K,V> tempNext = null;
+			/*
+			 * To remove:
+			 *   1. GET bin - using hash(key)
+			 *   2. FIND element
+			 *   3. GET the next element of remove node (if it exists)
+			 *   4. PUT the next element of remove node into previous node
+			 *   5. return value
+			 */
+			while(current != null){
 				if(current.getKey().equals(key)){
-					// element is located, return value
-					/*
-					 * To remove:
-					 *   1. GET element - success
-					 *   2. GET the next element of remove node (if it exists)
-					 *   3. PUT the next element of remove node into previous node
-					 *   4. return value
-					 */
+					// found item
 					V tempValue = current.getValue();
-					ChainingHashMapNode<K,V> tempNext = current.getNext();
-					if(previous != null){
-						// it is not the first item in the bin:
-						previous.setNext(tempNext);
-						current.setValue(null);
-						current.setNext(null);
+					tempNext = current.getNext();
+					
+					if(tempNext != null){
+						// has next element
+						if(previous != null){
+							// has previous element, link next and previous
+							previous.setNext(tempNext);
+						}else{
+							// it is the first item in the list and has nodes after it:
+							this.map[index] = tempNext;
+						}
 					}else{
-						// it is the first item in the bin, so we empty that bin:
-						this.map[index] = null;
+						// does not have next element
+						if(previous != null){
+							// is last element in list:
+							previous.setNext(null);
+						}else{
+							// is first element in list:
+							this.map[index] = null;
+						}
 					}
 					this.numberOfItems -= 1;
 					return tempValue;
-				}
-				if(current.getNext() != null){
-					// there are more elements
-					//System.out.println("there are more elements");
-					current = current.getNext();
 				}else{
-					return null;
-				}
+					// there are more items in the list:
+					previous = current;
+					current = current.getNext();
+				}	
 			}
 		}
 		//keep java happy:

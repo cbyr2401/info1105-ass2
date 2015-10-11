@@ -77,9 +77,8 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 		for (int j = 0; current < this.map.length; j++) {
 
 			current = (hash1 + (j * hash2)) % this.map.length;
-			//System.out.println("Key: " + key + " | current: " + current);
 
-			if (this.map[current] == null) {
+			if (this.map[current] == null || this.map[current] == this.defunct) {
 				this.map[current] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
 				return null;
@@ -123,7 +122,8 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 			if (this.map[current] == null) {
 				return null;
 			} else {
-				if (this.map[current].getKey().equals(key)) {
+				if(this.map[current] == this.defunct) continue;
+				else if (this.map[current].getKey().equals(key)) {
 					return this.map[current].getValue();
 				}
 			}

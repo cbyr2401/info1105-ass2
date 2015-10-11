@@ -80,7 +80,7 @@ public class HashMap<K extends Comparable<K>, V> {
 
 		int counter = 0;
 		for(int i = index; i < this.map.length; i++){
-			if(this.map[i] == null){
+			if(this.map[i] == null || this.map[i] == this.defunct){
 				// found an empty node, put value in
 				this.map[i] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
@@ -106,7 +106,7 @@ public class HashMap<K extends Comparable<K>, V> {
 		}
 		// wrap around:
 		for(int i = 0; i < index; i++){
-			if(this.map[i] == null){
+			if(this.map[i] == null || this.map[i] == this.defunct){
 				// found an empty node, put value in
 				this.map[i] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
@@ -144,11 +144,13 @@ public class HashMap<K extends Comparable<K>, V> {
 		else{
 			for(int i = index; i < this.map.length; i++){
 				if(this.map[i] == null) return null;
+				else if(this.map[i] == this.defunct) continue;
 				else if(this.map[i].getKey().equals(key)) return this.map[i].getValue();
 				
 			}
 			for(int i = 0; i < index; i++){
 				if(this.map[i] == null) return null;
+				else if(this.map[i] == this.defunct) continue;
 				else if(this.map[i].getKey().equals(key)) return this.map[i].getValue();
 			}
 		}
@@ -164,6 +166,7 @@ public class HashMap<K extends Comparable<K>, V> {
 		else{
 			for(int i = index; i < this.map.length; i++){
 				if(this.map[i] == null) return null;
+				else if(this.map[i] == this.defunct) continue;
 				else if(this.map[i].getKey().equals(key)) {
 					V temp = this.map[i].getValue();
 					this.map[i] = this.defunct;
@@ -173,6 +176,7 @@ public class HashMap<K extends Comparable<K>, V> {
 			}
 			for(int i = 0; i < index; i++){
 				if(this.map[i] == null) return null;
+				else if(this.map[i] == this.defunct) continue;
 				else if(this.map[i].getKey().equals(key)) {
 					V temp = this.map[i].getValue();
 					this.map[i] = this.defunct;
