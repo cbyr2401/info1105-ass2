@@ -56,7 +56,8 @@ public class HashMap<K extends Comparable<K>, V> {
 		List<K> myList = new ArrayList<K>();
 		for (int i = 0; i < map.length; i++) {
 			if (this.map[i] != null) {
-				if(this.map[i].getKey() != null){ // due to defunct
+				if(this.map[i].getKey() != null){
+					// due to defunct
 					myList.add(this.map[i].getKey());
 				}
 			}
@@ -68,9 +69,6 @@ public class HashMap<K extends Comparable<K>, V> {
 	public V put(K key, V value) {
 		int index = hash(key) % this.map.length;
 		
-		//Placing the tally here, will add to the tally as soon as there is a collision. However it will not 
-		//Continually add with each iteration of the for loop.
-		//putCollisions++;
 		/*
 		 * This part of the method deals with any collisions, using linear
 		 * probing. If the keys are identical, it will replace the value,
@@ -104,6 +102,7 @@ public class HashMap<K extends Comparable<K>, V> {
 				counter++;
 			}
 		}
+		
 		// wrap around:
 		for(int i = 0; i < index; i++){
 			if(this.map[i] == null || this.map[i] == this.defunct){
@@ -129,7 +128,6 @@ public class HashMap<K extends Comparable<K>, V> {
 				counter++;
 			}
 		}
-		//keep java happy:
 		return null;
 	}
 
@@ -187,6 +185,10 @@ public class HashMap<K extends Comparable<K>, V> {
 		}
 		return null;
 	}
+	
+	/*
+	 * Statistics Collection Methods:
+	 */
 	
 	public int putCollisions(){
 		return this.putCollisions;

@@ -179,9 +179,14 @@ public class ChainingHashMapTests {
 		
 		assertEquals(15, m.keys().size());
 		assertEquals(3, m.getFullestBuckets()[0]);
-		assertEquals(0, m.getFullestBuckets()[1]);
+		assertEquals(1, m.getFullestBuckets()[1]);
 		assertEquals(false, m.isEmpty());
 		assertEquals(15, m.size());
+		
+		
+		m.put(15, 105);
+		assertEquals(3, m.getFullestBuckets()[0]);
+		assertEquals(2, m.getFullestBuckets()[1]);
 		
 		// collisions
 		m.put(15, 105);
@@ -202,7 +207,7 @@ public class ChainingHashMapTests {
 		
 		assertEquals(29, m.keys().size());
 		assertEquals(5, m.getFullestBuckets()[0]);
-		assertEquals(0, m.getFullestBuckets()[1]);
+		assertEquals(1, m.getFullestBuckets()[1]);
 		assertEquals(false, m.isEmpty());
 		assertEquals(29, m.size());
 		
@@ -251,7 +256,7 @@ public class ChainingHashMapTests {
 		// check values stored correctly and did not mess up counts:
 		assertEquals(30, m.keys().size());
 		assertEquals(5, m.getFullestBuckets()[0]);
-		assertEquals(0, m.getFullestBuckets()[1]);
+		assertEquals(2, m.getFullestBuckets()[1]);
 		assertEquals(false, m.isEmpty());
 		assertEquals(30, m.size());
 		
@@ -352,5 +357,34 @@ public class ChainingHashMapTests {
 		assertEquals(30-12, m.size());	
 	}
 	
+	
+	@Test
+	public void testStatistics(){
+		ChainingHashMap<Integer, Integer> m = new ChainingHashMap<>(10,7);
+		
+		// no collisions
+		m.put(0, 5);
+		m.put(1, 15);
+		m.put(2, 25);
+		m.put(3, 35);
+		m.put(4, 45);
+		m.put(5, 55);
+		m.put(6, 65);
+		m.put(7, 75);
+		
+		// collisions
+		m.put(8, 85);
+		m.put(9, 95);
+		m.put(10, 100);
+		m.put(11, 101);
+		m.put(12, 102);
+		m.put(13, 103);
+		m.put(14, 104);
+		
+		
+		
+		
+		
+	}
 
 }

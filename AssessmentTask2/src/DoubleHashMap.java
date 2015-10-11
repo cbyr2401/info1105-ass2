@@ -1,6 +1,12 @@
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * This is the Double HashMap class.
+ *  NOTE: defunct node means that if you query the position it is in
+ *         it will not be 'null'.  The key and value will be 'null'
+ */
+
 public class DoubleHashMap<K extends Comparable<K>, V> {
 	private HashMapNode<K, V>[] map;
 	private int hashMul;
@@ -9,13 +15,12 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 	private int numberOfItems;
 	private HashMapNode<K, V> defunct = new HashMapNode<>(null, null);
 
-	// Variables used for statistics
-	private int collisionTally;
+	//Variables used for statistics
+	private int putCollisions;
 	private int totalTally;
 	private int maxTally;
 	private int failures;
 
-	// updated construction
 	// construct a HashMap with 4000 places and given hash parameters
 	public DoubleHashMap(int multiplier, int modulus, int secondaryModulus) {
 		this.map = (HashMapNode<K, V>[]) new HashMapNode[4000];
@@ -40,7 +45,7 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 	public int hash(K key) {
 		return Math.abs(this.hashMul * key.hashCode()) % this.hashMod;
 	}
-
+	// secondary hashing
 	public int secondaryHash(K key) {
 		return this.hashMod2 - (Math.abs(key.hashCode()) % this.hashMod2);
 	}
@@ -59,7 +64,8 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 		List<K> myList = new ArrayList<K>();
 		for (int i = 0; i < map.length; i++) {
 			if (this.map[i] != null) {
-				if (this.map[i].getKey() != null) { // due to defunct
+				if (this.map[i].getKey() != null) {
+					// due to defunct
 					myList.add(this.map[i].getKey());
 				}
 			}
@@ -72,20 +78,25 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 		int hash2 = secondaryHash(key);
 		int current = -1;
 		int initialIndex = (hash1 + 0 * hash2) % this.map.length;
+		
 		boolean flag = false;
-		int max = 0;
+		int counter=0;
+		
 		for (int j = 0; current < this.map.length; j++) {
-
 			current = (hash1 + (j * hash2)) % this.map.length;
 
 			if (this.map[current] == null || this.map[current] == this.defunct) {
 				this.map[current] = new HashMapNode<>(key, value);
 				this.numberOfItems += 1;
+				// statistics collection:
+				if(counter > this.maxTally) this.maxTally = counter;
 				return null;
 			} else {
 				if (this.map[current].getKey().equals(key)) {
 					V temp = this.map[current].getValue();
 					this.map[current].setValue(value);
+					// statistics collection:
+					if(counter > this.maxTally) this.maxTally = counter;
 					return temp;
 				}
 			}
@@ -96,16 +107,15 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 					break;
 				}else{
 					flag = true;
-					collisionTally++;
+					this.putCollisions++;
 				}
 			}
-			totalTally++;
-			if (j > max) {
-				maxTally = j;
-			}
+			this.totalTally++;			
+			counter++;
 		}
 		failures++;
 		throw new RuntimeException("Double Hashing failed to find a free position");
+		// for DataSet testing -->  replace exception with null:
 		//return null;
 	}
 
@@ -141,7 +151,8 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 			if (this.map[current] == null) {
 				return null;
 			} else {
-				if (this.map[current].getKey().equals(key)) {
+				if(this.map[current] == this.defunct) continue;
+				else if (this.map[current].getKey().equals(key)) {
 					V temp = this.map[current].getValue();
 					this.map[current] = this.defunct;
 					this.numberOfItems -= 1;
@@ -152,8 +163,12 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 		return null;
 	}
 
+	/*
+	 *  Statistics Collection Methods
+	 */
+	
 	public int putCollisions() {
-		return this.collisionTally;
+		return this.putCollisions;
 	}
 
 	public int totalCollisions() {
@@ -165,7 +180,7 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 	}
 
 	public void resetStatistics() {
-		this.collisionTally = 0;
+		this.putCollisions = 0;
 		this.totalTally = 0;
 		this.maxTally = 0;
 		this.failures = 0;

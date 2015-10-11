@@ -18,6 +18,7 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		this.numberOfItems = 0;
 		
 	}
+	
 	// construct a HashMap with given capacity and given hash parameters
 	public ChainingHashMap(int hashMapSize, int multiplier, int modulus){
 		this.map = (ChainingHashMapNode<K,V>[]) new ChainingHashMapNode[hashMapSize];
@@ -25,31 +26,30 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		this.hashMul = multiplier;
 		this.numberOfItems = 0;
 	}
-	// hashing
-	public int hash(K key){
-		return Math.abs(this.hashMul * key.hashCode()) % this.hashMod;
-	}
+	
 	// size (return the number of nodes currently stored in the map)
 	public int size(){
 		return this.numberOfItems;
 	}
+	
 	public boolean isEmpty(){
 		return (size()==0);
 	}
+	
 	// interface
 	public int[] getFullestBuckets(){
 		int maxNodes = 0;
-		int maxIndex = 0;
 		int numNodes = 0;
+		int[] binCounts = new int[this.map.length];
+		
 		ChainingHashMapNode<K,V> current;
+		
 		for (int i = 0; i < this.map.length; i++) {
-			current = this.map[i];	
+			current = this.map[i];
 			if(current != null){
 				// there is a node in the array, but how many are unknown.
 				boolean done = false;
-				
 				while(!done){
-					
 					numNodes += 1;
 					if(current.getNext() != null){
 						// there are more nodes:
@@ -58,16 +58,21 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 						done = true;
 						// check / update values for getting largest bracket
 						if(numNodes > maxNodes){
-							maxIndex = i;
 							maxNodes = numNodes;
 						}
+						binCounts[i] = numNodes;
 						numNodes = 0;
 					}
 				}
 			}
+		}
+		numNodes = 0;
+		for(int i=0; i < this.map.length; i++){
+			if(binCounts[i] == maxNodes){
+				numNodes++;
 			}
-		//int[] arr = {maxNodes, maxIndex};
-		return new int[] {maxNodes, maxIndex};
+		}
+		return new int[] {maxNodes, numNodes};
 	}
 	public List<K> keys(){
 		List<K> myList = new ArrayList<K>();
@@ -143,7 +148,6 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 				}
 			}
 		}
-		//keep java happy:
 		return null;
 	}
 	public V remove(K key){
@@ -154,7 +158,6 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 			return null;
 		}else{
 			// there is stuff in the bin, but what?
-			boolean done = false;
 			ChainingHashMapNode<K,V> current = this.map[index];
 			ChainingHashMapNode<K,V> previous = null;
 			ChainingHashMapNode<K,V> tempNext = null;
@@ -202,5 +205,10 @@ public class ChainingHashMap<K extends Comparable<K>, V> {
 		}
 		//keep java happy:
 		return null;
+	}
+	
+	// hashing
+	public int hash(K key){
+		return Math.abs(this.hashMul * key.hashCode()) % this.hashMod;
 	}
 }

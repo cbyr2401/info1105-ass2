@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Datasets {
 	// change hash map type here:
-	HashMap<String, Double> hashMap;
+	DoubleHashMap<String, Double> hashMap;
 	
 	public Datasets(){
 		// empty
@@ -15,11 +15,11 @@ public class Datasets {
 	
 	
 	public Datasets(int mul, int mod, int size){
-		this.hashMap = new HashMap<>(size,mul,mod);
+		//this.hashMap = new HashMap<>(size,mul,mod);
 	}
 	
 	public Datasets(int mul, int mod, int size, int mod2){
-		//this.hashMap = new DoubleHashMap<>(size,mul,mod,mod2);
+		this.hashMap = new DoubleHashMap<>(size,mul,mod,mod2);
 	}
 	
 	

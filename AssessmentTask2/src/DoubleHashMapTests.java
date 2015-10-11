@@ -195,7 +195,7 @@ public class DoubleHashMapTests {
 	
 	@Test
 	public void testLargeMap(){
-		HashMap<Integer, Integer> m = new HashMap<>(10,7);
+		DoubleHashMap<Integer, Integer> m = new DoubleHashMap<>(10,7,4);
 		
 		// no collisions
 		m.put(0, 5);
@@ -383,6 +383,13 @@ public class DoubleHashMapTests {
 		assertEquals(30-12, m.keys().size());
 		assertEquals(false, m.isEmpty());
 		assertEquals(30-12, m.size());	
+	}
+	
+	@Test
+	public void testStatistics(){
+		HashMap<Integer, Integer> m = new HashMap<>(10,7);
+		
+		
 	}
 
 }

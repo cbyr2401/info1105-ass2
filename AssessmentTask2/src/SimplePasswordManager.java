@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.util.List;
 
 public class SimplePasswordManager {
@@ -6,9 +5,8 @@ public class SimplePasswordManager {
 
 	// construct a SimplePasswordManager with 4000 places and default hash
 	// parameters
-	// multiplier = 1 and modulus = 4271
 	public SimplePasswordManager() {
-
+		// multiplier = 1 and modulus = 4271
 		this.map = new ChainingHashMap<>(1,4271);
 	}
 
@@ -17,14 +15,25 @@ public class SimplePasswordManager {
 		this.map = new ChainingHashMap<>(size, multiplier, modulus);
 	}
 
-	/*
-	 * Implement a researched Hash Method for passwords here:
-	 */
-
 	// hashing
 	public Long hashPassword(String password) {
-		return (long) (Math.abs(password.hashCode()) * 512);
+		return doHash(password);
 	}
+	
+	/*
+	 *  Modified DJB hash function: 
+	 *   Reference: https://code.google.com/r/sergiobossa-terrastore-kryo
+	 */
+	private long doHash(String str) {
+        long hash = 5381;
+        // salt added so that Rainbow tables cannot look up value:
+        int salt = 125;
+
+        for (int i = 0; i < str.length(); i++) {
+            hash = ((hash << 5) + hash) + str.charAt(i);
+        }
+        return hash+salt;
+    }
 
 	// interface methods
 	// return an array of the usernames of the users currently stored
