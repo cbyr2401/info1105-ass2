@@ -114,9 +114,9 @@ public class DoubleHashMap<K extends Comparable<K>, V> {
 			counter++;
 		}
 		failures++;
-		throw new RuntimeException("Double Hashing failed to find a free position");
+		//throw new RuntimeException("Double Hashing failed to find a free position");
 		// for DataSet testing -->  replace exception with null:
-		//return null;
+		return null;
 	}
 
 	// Gets the hash index, then either returns the value at this index from the

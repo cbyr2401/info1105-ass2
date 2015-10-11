@@ -57,13 +57,35 @@ public class DatasetsTests {
 		//}
 		
 	}*/
-
 	
-	@Test
+	
+	@Test 
+	public void testChainingHashMap() throws FileNotFoundException, IOException{
+		Datasets set1= new Datasets(1, 4000, 4000, "test");
+		Datasets set2= new Datasets(10, 4000, 4000, "test");
+		Datasets set3= new Datasets(1, 4271, 4000, "test");
+		Datasets set4= new Datasets(5, 4271, 4000, "test");
+		Datasets set5= new Datasets(1, 4271, 2000, "test");
+		
+		System.out.println("**** SET 1 Chaining ****");
+		set1.exploreData("C:\\Users\\Cian Byrne\\Documents\\repos\\java_info1105_ass2\\datasetA.txt");
+		System.out.println("**** SET 2 Chaining ****");
+		set2.exploreData("C:\\Users\\Cian Byrne\\Documents\\repos\\java_info1105_ass2\\datasetA.txt");
+		System.out.println("**** SET 3 Chaining****");
+		set3.exploreData("C:\\Users\\Cian Byrne\\Documents\\repos\\java_info1105_ass2\\datasetA.txt");
+		System.out.println("**** SET 4 Chaining ****");
+		set4.exploreData("C:\\Users\\Cian Byrne\\Documents\\repos\\java_info1105_ass2\\datasetA.txt");
+		System.out.println("**** SET 5 Chaining ****");
+		set5.exploreData("C:\\Users\\Cian Byrne\\Documents\\repos\\java_info1105_ass2\\datasetA.txt");
+		
+	}
+	
+	
+	/*@Test
 	public void testPasswordDataMine() throws FileNotFoundException, IOException{
 		Datasets set1 = new Datasets();
 		
 		set1.printHashCollisions("C:\\Users\\Cian Byrne\\Documents\\repos\\java_info1105_ass2\\datasetB.txt");
-	}
+	}*/
 	
 }

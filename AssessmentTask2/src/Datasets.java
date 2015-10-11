@@ -7,7 +7,7 @@ import java.util.List;
 
 public class Datasets {
 	// change hash map type here:
-	DoubleHashMap<String, Double> hashMap;
+	ChainingHashMap<String, Double> hashMap;
 	
 	public Datasets(){
 		// empty
@@ -19,7 +19,12 @@ public class Datasets {
 	}
 	
 	public Datasets(int mul, int mod, int size, int mod2){
-		this.hashMap = new DoubleHashMap<>(size,mul,mod,mod2);
+		//this.hashMap = new DoubleHashMap<>(size,mul,mod,mod2);
+	}
+	
+	public Datasets(int mul, int mod, int size, String key){
+		System.out.println("Is this being run");
+		this.hashMap= new ChainingHashMap<>(mul, mod, size);
 	}
 	
 	
@@ -44,10 +49,11 @@ public class Datasets {
 			br.close();
 		}
 		// TODO: print collision statistics
-		System.out.println("PUT COLLISIONS: " + hashMap.putCollisions());
-	 	System.out.println("TOTAL COLLISIONS: " + hashMap.totalCollisions());
-	 	System.out.println("MAX COLLISIONS: " + hashMap.maxCollisions());
+		//System.out.println("PUT COLLISIONS: " + hashMap.putCollisions());
+	 	//System.out.println("TOTAL COLLISIONS: " + hashMap.totalCollisions());
+	 	//System.out.println("MAX COLLISIONS: " + hashMap.maxCollisions());
 	 	//System.out.println("FAILURES: " + hashMap.putFailures());
+		System.out.println("FullestBucket: "+ hashMap.getFullestBuckets()[0] + " | " + hashMap.getFullestBuckets()[1]);
 	}
 	
 	/*
